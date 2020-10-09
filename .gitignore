@@ -159,6 +159,9 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 .flattened-pom.xml
+/HELP.md
+/mvnw
+/mvnw.cmd
 
 ### VisualStudioCode ###
 .vscode
@@ -178,3 +181,4 @@ buildNumber.properties
 .history
 
 # End of https://www.gitignore.io/api/jenv,java,macos,maven,intellij+all,visualstudiocode
+
