@@ -1,0 +1,3 @@
+insert into product (name, price, brand, type, upc, quantity) values ('Arroz', 12.0, 'Camil', 'FOOD', 'ABC', 50);
+insert into product (name, price, brand, type, upc, quantity) values ('Feijao', 10.0, 'Nene', 'FOOD', 'DEF', 40);
+insert into product (name, price, brand, type, upc, quantity) values ('Leite', 4.55, 'Parmalat', 'FOOD', 'GHI', 30);

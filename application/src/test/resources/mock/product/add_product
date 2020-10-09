@@ -1,0 +1,9 @@
+{
+    "id": 1,
+    "name": "Arroz",
+    "price": 12,
+    "brand": "Camil",
+    "productType": "FOOD",
+    "upc" : "ABC",
+    "quantity" : 50
+}

@@ -1,0 +1,3 @@
+delete from product;
+
+alter table product AUTO_INCREMENT = 1;

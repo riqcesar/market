@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "name": "Arroz",
+        "price": 12.0,
+        "brand": "Camil",
+        "productType": "FOOD",
+        "upc" : "ABC",
+        "quantity" : 50
+    },
+    {
+        "id": 2,
+        "name": "Feijao",
+        "price": 10.0,
+        "brand": "Nene",
+        "productType": "FOOD",
+        "upc" : "DEF",
+        "quantity" : 40
+    },
+    {
+        "id": 3,
+        "name": "Leite",
+        "price": 4.55,
+        "brand": "Parmalat",
+        "productType": "FOOD",
+        "upc" : "GHI",
+        "quantity" : 30
+    }
+]
