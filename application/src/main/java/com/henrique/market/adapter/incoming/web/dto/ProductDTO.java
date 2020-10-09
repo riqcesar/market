@@ -46,15 +46,4 @@ public class ProductDTO {
             .build();
     }
 
-    public static Product toSpecification(final ProductDTO productDto) {
-        return Product.builder()
-            .name(productDto.getName() != null ? productDto.getName() : null)
-            .price(productDto.getPrice() != null ? productDto.getPrice() : null)
-            .brand(productDto.getBrand() != null ? productDto.getBrand() : null)
-            .productType(productDto.getProductType() != null ? productDto.getProductType() : null)
-            .upc(productDto.getUpc() != null ? productDto.getUpc() : null)
-            .quantity(productDto.getQuantity() != null ? productDto.getQuantity() : null)
-            .build();
-    }
-
 }
