@@ -1,0 +1,40 @@
+spring:
+    kafka:
+        consumer:
+            auto-offset-reset: earliest
+    cloud:
+        stream:
+            kafka:
+                binder:
+                    brokers: localhost:9092
+            bindings:
+                market-new-product:
+                    group: market-new-product
+                    destination: market-new-product
+                    content-type: application/json
+
+
+    datasource:
+        username: admin
+        password: admin
+        url: jdbc:mysql://127.0.0.1:3306/market
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        data:
+            jpa:
+                database: MYSQL
+                database-platform: MYSQL
+            jta:
+                enabled: true
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+springdoc:
+    api-docs:
+        path: /api-docs-open.json
+
+feign:
+    client:
+        config:
+            default:
+                loggerLevel: FULL

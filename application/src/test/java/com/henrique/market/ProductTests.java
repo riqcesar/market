@@ -2,13 +2,19 @@ package com.henrique.market;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -19,6 +25,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Map;
 import java.util.Set;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -35,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductTests extends AbstractIntegrationMarketTests {
 
     @Container
-    private static final MySQLContainer MY_SQL_CONTAINER = (MySQLContainer) new MySQLContainer("mysql:8")
+    private static final MySQLContainer MY_SQL_CONTAINER = (MySQLContainer) new MySQLContainer("mysql:5.7")
         .withUsername("admin")
         .withPassword("admin")
         .withDatabaseName("market")
@@ -46,17 +53,24 @@ class ProductTests extends AbstractIntegrationMarketTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private MessageCollector messageCollector;
+
+    @Autowired
+    @Qualifier("newProductChannel")
+    private SubscribableChannel newProductChannel;
+
     @Test
     @Sql(scripts = {"classpath:sqls/clear"}, executionPhase = BEFORE_TEST_METHOD)
     void givenProduct_whenReceived_shouldSaveAndReturnProductSaved() throws Exception {
         final String payload = getJsonFileAsString("expected/product/add_product");
 
-        final MvcResult mvcResult = mockMvc.perform(post("/product/create")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(payload))
-            .andExpect(status().isOk()).andReturn();
+        final Message message = MessageBuilder.createMessage(payload, new MessageHeaders(Map.of()));
 
-        verifyMessageJson("mock/product/add_product", mvcResult.getResponse().getContentAsString(), Set.of("id"));
+        newProductChannel.send(message);
+
+        //verifyDatasetForTable("new_product_create", "PRODUCT", "SELECT * FROM PRODUCT", new String[]{});
+
     }
 
     @Test
@@ -123,7 +137,7 @@ class ProductTests extends AbstractIntegrationMarketTests {
     @Test
     @SqlGroup({@Sql(scripts = {"classpath:sqls/clear"}, executionPhase = BEFORE_TEST_METHOD),
         @Sql(scripts = {"classpath:sqls/data"}, executionPhase = BEFORE_TEST_METHOD)})
-    void givenProductAlreadyExisted_whenReceived_shouldIncreaseQuantityAndReturnProductSaved() throws Exception {
+    void givenProductAlreadyExisted_whenReceived_shouldIncreateQuantityAndReturnProductSaved() throws Exception {
         final String payload = getJsonFileAsString("expected/product/add_product_already_existed");
 
         final MvcResult mvcResult = mockMvc.perform(post("/product/create")
