@@ -20,6 +20,7 @@ import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Encoding;
 import org.xml.sax.InputSource;
 
 import java.io.InputStream;
@@ -79,6 +80,7 @@ public abstract class AbstractIntegrationMarketTests {
         final DatabaseConnection dbUnitConnection = new DatabaseConnection(Objects.requireNonNull(hikariDataSource.getConnection()));
         final DatabaseConfig dbUnitConnectionConfig = dbUnitConnection.getConfig();
         dbUnitConnectionConfig.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+
         return dbUnitConnection;
     }
 
@@ -102,6 +104,7 @@ public abstract class AbstractIntegrationMarketTests {
     private IDataSet getDataSet(final String dataset) throws DataSetException {
         try {
             final InputSource source = new InputSource(getClass().getResourceAsStream(dataset));
+            source.setEncoding("UTF-8");
             final FlatXmlProducer producer = new FlatXmlProducer(source, false, true);
             final ReplacementDataSet dataSet = new ReplacementDataSet(new FlatXmlDataSet(producer));
             dataSet.addReplacementObject("[NULL]", null);

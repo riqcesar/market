@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <PRODUCT id='1' name='Arroz' price='12' brand='Camil' type='FOOD' upc='ABC' quantity='100'/>
+    <PRODUCT id='2' name='Feijão' price='10' brand='Nene' type='FOOD' upc='DEF' quantity='40'/>
+    <PRODUCT id='3' name='Leite' price='4.55' brand='Parmalat' type='FOOD' upc='GHI' quantity='30'/>
+
+</dataset>

@@ -10,7 +10,7 @@
     },
     {
         "id":2,
-        "name":"Feijao",
+        "name":"Feijão",
         "price":10.00,
         "brand":"Nene",
         "productType":"FOOD",

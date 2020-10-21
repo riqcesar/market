@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -25,6 +24,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,9 +54,6 @@ class ProductTests extends AbstractIntegrationMarketTests {
     private MockMvc mockMvc;
 
     @Autowired
-    private MessageCollector messageCollector;
-
-    @Autowired
     @Qualifier("newProductChannel")
     private SubscribableChannel newProductChannel;
 
@@ -69,7 +66,7 @@ class ProductTests extends AbstractIntegrationMarketTests {
 
         newProductChannel.send(message);
 
-        //verifyDatasetForTable("new_product_create", "PRODUCT", "SELECT * FROM PRODUCT", new String[]{});
+        verifyDatasetForTable("new_product_create", "product", "select * from product", new String[]{});
 
     }
 
@@ -131,21 +128,20 @@ class ProductTests extends AbstractIntegrationMarketTests {
         final MvcResult mvcResult = mockMvc.perform(get("/product/filter"))
             .andExpect(status().isOk()).andReturn();
 
-        verifyMessageJson("mock/product/get_all_products", mvcResult.getResponse().getContentAsString(), Set.of());
+        verifyMessageJson("mock/product/get_all_products", mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), Set.of());
     }
 
     @Test
     @SqlGroup({@Sql(scripts = {"classpath:sqls/clear"}, executionPhase = BEFORE_TEST_METHOD),
         @Sql(scripts = {"classpath:sqls/data"}, executionPhase = BEFORE_TEST_METHOD)})
-    void givenProductAlreadyExisted_whenReceived_shouldIncreateQuantityAndReturnProductSaved() throws Exception {
+    void givenProductAlreadyExisted_whenReceived_shouldIncreaseQuantityAndReturnProductSaved() throws Exception {
         final String payload = getJsonFileAsString("expected/product/add_product_already_existed");
+        final Message message = MessageBuilder.createMessage(payload, new MessageHeaders(Map.of()));
 
-        final MvcResult mvcResult = mockMvc.perform(post("/product/create")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(payload))
-            .andExpect(status().isOk()).andReturn();
+        newProductChannel.send(message);
 
-        verifyMessageJson("mock/product/add_product_already_existed", mvcResult.getResponse().getContentAsString(), Set.of("id"));
+        verifyDatasetForTable("new_product_create_but_already_exist", "product", "select * from product", new String[]{});
+
     }
 
     @Test
@@ -158,7 +154,7 @@ class ProductTests extends AbstractIntegrationMarketTests {
             .queryParam("priceMax", "13"))
             .andExpect(status().isOk()).andReturn();
 
-        verifyMessageJson("mock/product/get_products_between_priceMin_PriceMax", mvcResult.getResponse().getContentAsString(), Set.of());
+        verifyMessageJson("mock/product/get_products_between_priceMin_PriceMax", mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), Set.of());
     }
 
     @Test
@@ -170,7 +166,7 @@ class ProductTests extends AbstractIntegrationMarketTests {
             .queryParam("name", "rro"))
             .andExpect(status().isOk()).andReturn();
 
-        verifyMessageJson("mock/product/get_products_name_like", mvcResult.getResponse().getContentAsString(), Set.of());
+        verifyMessageJson("mock/product/get_products_name_like", mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), Set.of());
     }
 
     @Test
@@ -182,7 +178,7 @@ class ProductTests extends AbstractIntegrationMarketTests {
             .queryParam("quantity", "35"))
             .andExpect(status().isOk()).andReturn();
 
-        verifyMessageJson("mock/product/get_all_products_quantity_greater_than", mvcResult.getResponse().getContentAsString(), Set.of());
+        verifyMessageJson("mock/product/get_all_products_quantity_greater_than", mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), Set.of());
     }
 
     @Test
@@ -194,7 +190,7 @@ class ProductTests extends AbstractIntegrationMarketTests {
             .queryParam("brand", "ami"))
             .andExpect(status().isOk()).andReturn();
 
-        verifyMessageJson("mock/product/get_products_brand_like", mvcResult.getResponse().getContentAsString(), Set.of());
+        verifyMessageJson("mock/product/get_products_brand_like", mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), Set.of());
     }
 
     @Test
@@ -214,7 +210,7 @@ class ProductTests extends AbstractIntegrationMarketTests {
             TestPropertyValues.of(
                 String.format("spring.datasource.username=%s", MY_SQL_CONTAINER.getUsername()),
                 String.format("spring.datasource.password=%s", MY_SQL_CONTAINER.getPassword()),
-                String.format("spring.datasource.url=%s", MY_SQL_CONTAINER.getJdbcUrl())
+                String.format("spring.datasource.url=%s%s", MY_SQL_CONTAINER.getJdbcUrl(), "?characterEncoding=utf8")
                                  ).applyTo(configurableApplicationContext.getEnvironment());
         }
 

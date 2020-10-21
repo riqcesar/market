@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,7 +24,7 @@ public class ProductPortImpl implements ProductPort {
     private final ProductRepository productRepository;
 
     @Override
-    public Product create(final Product product) {
+    public Product save(final Product product) {
         return productRepository.save(ProductEntity.from(product)).toDomain();
     }
 

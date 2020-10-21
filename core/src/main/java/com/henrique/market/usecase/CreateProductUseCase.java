@@ -11,10 +11,17 @@ public class CreateProductUseCase {
 
     private final ProductPort productPort;
 
-    public Product execute(Product product) {
-        final Optional<Product> productFound = productPort.findByUpc(product.getUpc());
-        productFound.ifPresentOrElse(p -> p.addQuantity(product.getQuantity()), () -> productPort.create(product));
-        return productFound.orElse(product);
+    public Product execute(Product newProduct) {
+        final Optional<Product> productFound = productPort.findByUpc(newProduct.getUpc());
+
+        if (productFound.isEmpty()){
+            return productPort.save(newProduct);
+        }
+
+        Product product = productFound.get();
+        product.addQuantity(newProduct.getQuantity());
+
+        return productPort.save(product);
     }
 
 }

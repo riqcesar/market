@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ProductPort {
 
-    Product create(Product product);
+    Product save(Product product);
 
     Optional<Product> findByUpc(String upc);
 
