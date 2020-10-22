@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewProductEvent {
+public class ProductEvent {
 
     @NotNull
     private String name;
@@ -34,7 +34,7 @@ public class NewProductEvent {
     @NotNull
     private Long quantity;
 
-    public static Product toDomain(NewProductEvent event){
+    public static Product toDomain(ProductEvent event) {
         return Product.builder()
             .name(event.getName())
             .price(event.getPrice())
@@ -44,4 +44,5 @@ public class NewProductEvent {
             .quantity(event.getQuantity())
             .build();
     }
+
 }

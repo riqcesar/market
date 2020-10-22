@@ -14,7 +14,7 @@ public class CreateProductUseCase {
     public Product execute(Product newProduct) {
         final Optional<Product> productFound = productPort.findByUpc(newProduct.getUpc());
 
-        if (productFound.isEmpty()){
+        if (productFound.isEmpty()) {
             return productPort.save(newProduct);
         }
 

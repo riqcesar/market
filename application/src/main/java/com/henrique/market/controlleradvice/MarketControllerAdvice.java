@@ -18,7 +18,7 @@ public class MarketControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
+    public ErrorDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 
         final List<FieldErrorDTO> fieldErrorDtos = ex.getBindingResult().getFieldErrors()
             .stream()

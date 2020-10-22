@@ -1,7 +1,8 @@
 package com.henrique.market.listener;
 
-import com.henrique.market.config.ProductNotifierBinding;
-import com.henrique.market.event.NewProductEvent;
+import com.henrique.market.config.StockNotifierBinding;
+import com.henrique.market.event.NewProductsEvent;
+import com.henrique.market.event.ProductEvent;
 import com.henrique.market.usecase.CreateProductUseCase;
 import lombok.AllArgsConstructor;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -14,14 +15,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @AllArgsConstructor
-public class NewProductMessageListener {
+public class StockMessageListener {
 
     private final CreateProductUseCase createProductUseCase;
 
-    @StreamListener(value = ProductNotifierBinding.MARKET_NEW_PRODUCT)
-    public void receive(Message<NewProductEvent> message){
+    @StreamListener(value = StockNotifierBinding.STOCK_NEW_PRODUCT)
+    public void receive(Message<NewProductsEvent> message) {
         var newProductEvent = message.getPayload();
-        createProductUseCase.execute(NewProductEvent.toDomain(newProductEvent));
+        newProductEvent.getProductsEvent().stream().forEach((e) -> createProductUseCase.execute(ProductEvent.toDomain(e)));
     }
 
 }

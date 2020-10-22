@@ -10,9 +10,8 @@ public class FieldErrorDTO {
 
     private String message;
 
-    public static FieldErrorDTO from(FieldError fieldError){
+    public static FieldErrorDTO from(FieldError fieldError) {
         return new FieldErrorDTO(fieldError.getField(), fieldError.getDefaultMessage());
-
     }
 
 }

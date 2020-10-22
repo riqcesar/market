@@ -60,14 +60,13 @@ class ProductTests extends AbstractIntegrationMarketTests {
     @Test
     @Sql(scripts = {"classpath:sqls/clear"}, executionPhase = BEFORE_TEST_METHOD)
     void givenProduct_whenReceived_shouldSaveAndReturnProductSaved() throws Exception {
-        final String payload = getJsonFileAsString("expected/product/add_product");
+        final String payload = getJsonFileAsString("expected/product/add_products");
 
         final Message message = MessageBuilder.createMessage(payload, new MessageHeaders(Map.of()));
 
         newProductChannel.send(message);
 
         verifyDatasetForTable("new_product_create", "product", "select * from product", new String[]{});
-
     }
 
     @Test
@@ -141,7 +140,6 @@ class ProductTests extends AbstractIntegrationMarketTests {
         newProductChannel.send(message);
 
         verifyDatasetForTable("new_product_create_but_already_exist", "product", "select * from product", new String[]{});
-
     }
 
     @Test
@@ -154,7 +152,8 @@ class ProductTests extends AbstractIntegrationMarketTests {
             .queryParam("priceMax", "13"))
             .andExpect(status().isOk()).andReturn();
 
-        verifyMessageJson("mock/product/get_products_between_priceMin_PriceMax", mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), Set.of());
+        verifyMessageJson("mock/product/get_products_between_priceMin_PriceMax", mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+            Set.of());
     }
 
     @Test
@@ -178,7 +177,8 @@ class ProductTests extends AbstractIntegrationMarketTests {
             .queryParam("quantity", "35"))
             .andExpect(status().isOk()).andReturn();
 
-        verifyMessageJson("mock/product/get_all_products_quantity_greater_than", mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), Set.of());
+        verifyMessageJson("mock/product/get_all_products_quantity_greater_than", mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8),
+            Set.of());
     }
 
     @Test

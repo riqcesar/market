@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.SubscribableChannel;
 
 @Configuration
-public class ProductNotifierKafkaConfig {
+public class StockNotifierKafkaConfig {
 
     @Bean
-    public SubscribableChannel newProductChannel(final ProductNotifierBinding topicBinding) {
+    public SubscribableChannel newProductChannel(final StockNotifierBinding topicBinding) {
         return topicBinding.newProductChannel();
     }
 

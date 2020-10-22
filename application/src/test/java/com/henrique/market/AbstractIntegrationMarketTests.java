@@ -20,7 +20,6 @@ import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Encoding;
 import org.xml.sax.InputSource;
 
 import java.io.InputStream;
@@ -34,10 +33,9 @@ import static org.dbunit.Assertion.assertEqualsByQuery;
 
 public abstract class AbstractIntegrationMarketTests {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private HikariDataSource hikariDataSource;
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Load file from file system and return as {@link String}
@@ -73,7 +71,8 @@ public abstract class AbstractIntegrationMarketTests {
      * Return a connection to be used at DBUnit
      *
      * @return instance of database connection
-     * @throws SQLException          will be thrown if occurs some error perform sql command
+     *
+     * @throws SQLException will be thrown if occurs some error perform sql command
      * @throws DatabaseUnitException will be thrown if occurs some error
      */
     protected IDatabaseConnection getIDatabaseConnection() throws SQLException, DatabaseUnitException {
@@ -87,10 +86,11 @@ public abstract class AbstractIntegrationMarketTests {
     /**
      * Validate data from query database with xml document
      *
-     * @param fileName       document with fixtures
-     * @param tableName      table that will assert information
-     * @param sqlStatement   run to result will be assert
+     * @param fileName document with fixtures
+     * @param tableName table that will assert information
+     * @param sqlStatement run to result will be assert
      * @param ignoredColumns columns that will not be considered in the assertion
+     *
      * @throws Exception will be thron if occurs some error
      */
     protected void verifyDatasetForTable(final String fileName, final String tableName, final String sqlStatement,

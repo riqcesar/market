@@ -8,8 +8,8 @@ spring:
                 binder:
                     brokers: localhost:9092
             bindings:
-                market-new-product:
-                    group: market-new-product
+                stock-new-product:
+                    group: stock-new-product
                     content-type: application/json
 
     datasource:
